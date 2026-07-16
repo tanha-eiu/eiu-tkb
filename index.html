@@ -4,22 +4,31 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bộ môn Vật lý — Sắp xếp giảng viên TKB</title>
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <style>
   :root{
-    --ink:#14213D; --ink-soft:#2B3A5C; --paper:#FAFAF7; --panel:#FFFFFF;
-    --line:#E3E0D8; --gold:#C68A1E; --gold-soft:#F3E4C4; --teal:#2F6D5C;
-    --teal-soft:#E1EEE9; --red:#B23A2E; --red-soft:#F7E3E0; --amber:#B8860B;
-    --amber-soft:#FBF0D9; --muted:#6B7280;
+    --ink:#030391; --ink-soft:#142F9E; --paper:#F4F7FC; --panel:#FFFFFF;
+    --line:#D8E2F0; --gold:#1488D8; --gold-soft:#E5F2FC; --teal:#0E6BA8;
+    --teal-soft:#DCEEFA; --red:#C0392B; --red-soft:#FAE6E3; --amber:#B7791F;
+    --amber-soft:#FCF1DC; --muted:#5B6B85;
   }
   *{box-sizing:border-box;}
-  body{margin:0; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,sans-serif; background:var(--paper); color:var(--ink);}
+  body{margin:0; font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; background:var(--paper); color:var(--ink);}
   .letterhead{background:var(--ink); color:#fff; padding:22px 36px 18px; position:relative; overflow:hidden; display:flex; justify-content:space-between; align-items:flex-end;}
   .letterhead::after{content:""; position:absolute; left:0; right:0; bottom:0; height:4px;
     background:linear-gradient(90deg,var(--gold) 0 33%, transparent 33% 34%, var(--gold) 34% 67%, transparent 67% 68%, var(--gold) 68% 100%); opacity:.9;}
   .letterhead .eyebrow{font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--gold-soft); margin-bottom:6px; font-weight:600;}
-  .letterhead h1{font-family:Georgia,'Times New Roman',serif; font-size:22px; margin:0 0 4px; font-weight:600;}
+  .letterhead h1{font-family:inherit; font-size:21px; margin:0 0 4px; font-weight:800; letter-spacing:-0.01em;}
   .letterhead p.sub{margin:0; font-size:12.5px; color:#C9CEDC;}
   .who{text-align:right; font-size:12.5px; color:#C9CEDC;}
   .who b{color:#fff;}
@@ -44,7 +53,7 @@
   .btn-danger-text{background:transparent; color:var(--red); border:none; padding:4px 8px; font-weight:600; font-size:12.5px; cursor:pointer;}
 
   .panel{background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:20px; margin-bottom:20px;}
-  .panel h2{font-family:Georgia,serif; font-size:16px; margin:0 0 4px;}
+  .panel h2{font-family:inherit; font-size:15.5px; margin:0 0 4px; font-weight:700; letter-spacing:-0.005em;}
   .panel .desc{font-size:12.5px; color:var(--muted); margin:0 0 16px;}
 
   table{width:100%; border-collapse:collapse; font-size:13px;}
@@ -86,23 +95,69 @@
   .grid-tkb .class-chip b{display:block; font-size:11px;}
   .grid-tkb .class-chip span{color:var(--muted); font-size:10.5px;}
 
-  .login-wrap{min-height:100vh; display:flex; align-items:center; justify-content:center; background:var(--ink);}
+  .login-wrap{
+    min-height:100vh; display:flex; align-items:center; justify-content:center;
+    background:
+      linear-gradient(160deg, rgba(3,3,145,0.88), rgba(20,136,216,0.55)),
+      url('login-bg.jpg') center/cover no-repeat;
+    background-color:var(--ink);
+  }
   .login-box{background:#fff; border-radius:12px; padding:36px; width:340px; box-shadow:0 20px 60px rgba(0,0,0,.3);}
-  .login-box h1{font-family:Georgia,serif; font-size:19px; margin:0 0 4px;}
+  .login-box h1{font-family:inherit; font-size:19px; margin:0 0 4px; font-weight:800;}
   .login-box p{font-size:12.5px; color:var(--muted); margin:0 0 20px;}
   .login-box label{font-size:12px; font-weight:600; display:block; margin:12px 0 5px;}
   .login-box input{width:100%; padding:9px 10px;}
   .login-box .err{color:var(--red); font-size:12px; margin-top:10px; min-height:16px;}
   .login-box button{width:100%; margin-top:16px;}
-  .hint{background:var(--amber-soft); border:1px solid var(--gold); border-radius:6px; padding:8px 10px; font-size:11.5px; color:#7A5A0E; margin-top:14px;}
 
   .import-preview td input{width:100%;}
   .empty-state{text-align:center; padding:36px 20px; color:var(--muted); font-size:13px;}
   footer{text-align:center; padding:22px; font-size:11.5px; color:var(--muted);}
   .badge-count{background:var(--ink); color:#fff; font-size:11px; padding:2px 7px; border-radius:10px; margin-left:6px;}
-  .hocky-input{font-weight:600;}
   #dropzone{border:2px dashed var(--line); border-radius:8px; padding:26px; text-align:center; color:var(--muted); font-size:13px; cursor:pointer;}
   #dropzone.drag{border-color:var(--gold); background:var(--gold-soft);}
+
+  .loading-overlay{
+    position:fixed; inset:0; background:rgba(20,33,61,0.55); z-index:9999;
+    display:none; align-items:center; justify-content:center; flex-direction:column; gap:14px;
+  }
+  .spinner{
+    width:44px; height:44px; border-radius:50%;
+    border:4px solid rgba(255,255,255,0.25); border-top-color:var(--gold);
+    animation:spin 0.8s linear infinite;
+  }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+  .loading-overlay .loading-text{ color:#fff; font-size:13.5px; font-weight:600; }
+
+  .modal-backdrop{
+    position:fixed; inset:0; background:rgba(20,33,61,0.5); z-index:9998;
+    display:none; align-items:center; justify-content:center;
+  }
+  .modal-box{
+    background:#fff; border-radius:12px; padding:22px; width:420px; max-width:92vw;
+    box-shadow:0 20px 60px rgba(0,0,0,.3);
+  }
+  .modal-box h3{font-family:inherit; font-size:15.5px; margin:0 0 4px; font-weight:700;}
+  .modal-box .modal-desc{font-size:12px; color:var(--muted); margin:0 0 16px;}
+  .ca-grid{display:grid; grid-template-columns:70px repeat(5,1fr); gap:5px; margin-bottom:16px;}
+  .ca-grid .gh{font-size:11px; font-weight:700; text-align:center; color:var(--muted); padding:4px;}
+  .ca-grid .rh{font-size:11.5px; font-weight:700; color:var(--ink-soft); display:flex; align-items:center;}
+  .ca-cell{
+    border:1px solid var(--line); border-radius:6px; padding:8px 4px; text-align:center;
+    font-size:11px; cursor:pointer; background:#fff; color:var(--muted); user-select:none;
+  }
+  .ca-cell.active{background:var(--amber-soft); border-color:var(--amber); color:var(--amber); font-weight:700;}
+  .ca-cell.hard{background:var(--red-soft); border-color:var(--red); color:var(--red); font-weight:700;}
+  .day-toggle-all{font-size:10px; color:var(--ink-soft); text-align:center; cursor:pointer; text-decoration:underline; padding-bottom:2px;}
+
+  .chip-row{display:flex; flex-wrap:wrap; gap:7px; margin-bottom:16px;}
+  .filter-chip{
+    padding:6px 13px; border-radius:20px; font-size:12.5px; font-weight:600; cursor:pointer;
+    border:1px solid var(--line); background:#fff; color:var(--muted); user-select:none; transition:all .12s ease;
+  }
+  .filter-chip:hover{border-color:var(--gold); color:var(--ink);}
+  .filter-chip.active{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .grid-tkb .class-chip.dimmed{opacity:.25; filter:grayscale(60%);}
 </style>
 </head>
 <body>
@@ -110,14 +165,13 @@
 <div class="login-wrap" id="loginWrap">
   <div class="login-box">
     <h1>Bộ môn Vật lý</h1>
-    <p>Hệ thống sắp xếp giảng viên TKB — đăng nhập để tiếp tục</p>
+    <p>Hệ thống quản lý phân công giảng dạy</p>
     <label>Tài khoản</label>
     <input type="text" id="loginUser" placeholder="admin">
     <label>Mật khẩu</label>
     <input type="password" id="loginPass" placeholder="********">
     <div class="err" id="loginErr"></div>
     <button class="btn btn-gold" id="btnLogin">Đăng nhập</button>
-    <div class="hint">Lần đầu dùng: tài khoản mặc định <b>admin / admin123</b> (đổi mật khẩu sau khi vào). Cần cấu hình API_URL trong file này trước.</div>
   </div>
 </div>
 
@@ -126,7 +180,7 @@
     <div>
       <div class="eyebrow">Eastern International University · School of General Education</div>
       <h1>Bộ môn Vật lý — Sắp xếp giảng viên</h1>
-      <p class="sub">Học kỳ: <input type="text" id="hocKyInput" class="hocky-input" style="background:transparent; border:1px solid #445; color:#fff; padding:3px 8px; border-radius:5px; width:150px;"></p>
+      <p class="sub">Công cụ nội bộ bộ môn — sắp xếp giảng viên cho lớp học phần</p>
     </div>
     <div class="who">
       Xin chào, <b id="whoName"></b> <span class="pill" id="whoRole"></span>
@@ -151,7 +205,8 @@
       </div>
       <div class="panel">
         <h2>Bảng tổng quan Thứ x Ca</h2>
-        <p class="desc">Ca 1: 07:30-09:30 - Ca 2: 09:30-11:30 - Ca 3: 12:30-14:30 - Ca 4: 14:30-16:30. Lớp kéo dài nhiều ca sẽ hiện lặp lại ở các ô liên quan.</p>
+        <p class="desc">Ca 1: 07:30–09:30 · Ca 2: 09:30–11:30 · Ca 3: 12:30–14:30 · Ca 4: 14:30–16:30. Lớp học kéo dài nhiều ca sẽ hiển thị tại các ô tương ứng.</p>
+        <div class="chip-row" id="teacherFilterChips"></div>
         <div id="gridWrap"></div>
       </div>
       <div class="panel">
@@ -164,24 +219,31 @@
       <div class="toolbar">
         <button class="btn btn-gold" id="btnAutoAssign">Tự động gợi ý phân công</button>
         <button class="btn btn-outline" id="btnClearAssign">Xóa toàn bộ phân công</button>
-        <button class="btn btn-outline" id="btnExportOffice">Xuất Excel gửi Phòng Đào tạo</button>
+        <button class="btn btn-gold" id="btnSavePhanCong">Lưu thay đổi</button>
+        <span id="pcDirtyNote" style="font-size:12px; color:var(--amber); display:none;">● có thay đổi chưa lưu</span>
       </div>
       <div class="panel">
         <h2>Danh sách lớp học phần và phân công</h2>
-        <p class="desc">Đỏ = trùng giờ (không cho phép). Vàng = trùng ngày giảng viên muốn nghỉ (chỉ là gợi ý, vẫn xếp được).</p>
+        <p class="desc">Màu đỏ biểu thị trùng lịch giảng dạy. Màu vàng biểu thị trùng khung giờ ưu tiên nghỉ của giảng viên (điều kiện tham khảo). Thay đổi cần được lưu để có hiệu lực.</p>
         <table><thead><tr>
           <th style="width:26px">#</th><th>Lớp</th><th style="width:64px">Loại</th><th style="width:70px">Thứ</th>
           <th style="width:110px">Giờ</th><th style="width:110px">Phòng</th><th style="width:190px">Giảng viên</th>
         </tr></thead><tbody id="pcBody"></tbody></table>
       </div>
+      <div class="panel">
+        <h2>Xuất file Word điền tên giảng viên</h2>
+        <p class="desc">Sử dụng file Word đã nạp tại mục "Lớp học phần" làm mẫu, điền tên giảng viên vào các ô Instructor còn trống của lớp Vật lý, giữ nguyên định dạng gốc để gửi Phòng Đào tạo.</p>
+        <div id="exportTemplateStatus" class="desc"></div>
+        <button class="btn btn-gold" id="btnExportFilledWord">Xuất Word đã điền tên</button>
+      </div>
     </div>
 
     <div class="view" id="view-lophocphan">
       <div class="panel">
-        <h2>Nạp file PDF từ Phòng Đào tạo</h2>
-        <p class="desc">Chỉ trích các dòng thuộc mã môn PHYS. Sau khi nạp, kiểm tra/sửa bảng preview rồi mới lưu - trích tự động có thể lệch vài trường hợp đặc biệt.</p>
-        <div id="dropzone">Kéo thả file PDF vào đây, hoặc bấm để chọn file
-          <input type="file" id="pdfInput" accept="application/pdf" style="display:none">
+        <h2>Nạp file từ Phòng Đào tạo</h2>
+        <p class="desc">Hệ thống chỉ trích xuất các lớp thuộc mã môn PHYS. File <b>.docx</b> cho độ chính xác cao nhất. Với file <b>.pdf</b>, hệ thống tự động chuyển đổi định dạng trước khi xử lý; độ chính xác tương đương nhưng không tuyệt đối, nên kiểm tra dữ liệu trước khi lưu.</p>
+        <div id="dropzone">Kéo thả file .docx hoặc .pdf vào khu vực này, hoặc chọn file từ máy tính
+          <input type="file" id="docxInput" accept=".docx,.pdf" style="display:none">
         </div>
         <div id="importPreviewWrap" style="margin-top:16px;"></div>
       </div>
@@ -190,16 +252,23 @@
         <div class="toolbar" style="margin-bottom:14px;">
           <h2 style="margin:0;">Danh sách lớp học phần (học kỳ hiện tại)</h2>
           <button class="btn btn-primary btn-sm" id="btnAddLop">+ Thêm lớp thủ công</button>
+          <button class="btn btn-gold btn-sm" id="btnSaveLop">Lưu thay đổi</button>
+          <button class="btn btn-outline btn-sm" id="btnDeleteAllLop" style="color:var(--red); border-color:var(--red);">Xóa toàn bộ lớp học phần</button>
+          <span id="lopDirtyNote" style="font-size:12px; color:var(--amber); display:none;">● có thay đổi chưa lưu</span>
         </div>
         <table><thead><tr>
-          <th>Môn</th><th>Mã lớp</th><th style="width:64px">Loại</th><th style="width:80px">Thứ</th>
-          <th style="width:150px">Giờ</th><th style="width:130px">Phòng</th><th style="width:40px"></th>
+          <th style="width:110px">Mã môn</th><th style="width:100px">Mã lớp</th><th style="width:64px">Loại</th><th style="width:70px">Thứ</th>
+          <th style="width:80px">Bắt đầu</th><th style="width:80px">Kết thúc</th><th style="width:120px">Phòng</th><th style="width:40px"></th>
         </tr></thead><tbody id="lopBody"></tbody></table>
       </div>
     </div>
 
     <div class="view" id="view-monhoc">
-      <div class="toolbar"><button class="btn btn-primary" id="btnAddMonHoc">+ Thêm môn học</button></div>
+      <div class="toolbar">
+        <button class="btn btn-primary" id="btnAddMonHoc">+ Thêm môn học</button>
+        <button class="btn btn-gold" id="btnSaveMonHoc">Lưu thay đổi</button>
+        <span id="mhDirtyNote" style="font-size:12px; color:var(--amber); display:none;">● có thay đổi chưa lưu</span>
+      </div>
       <div class="panel">
         <h2>Danh mục môn học</h2>
         <table><thead><tr><th style="width:140px">Mã môn</th><th>Tên môn</th><th style="width:100px">Số tín chỉ</th><th style="width:40px"></th></tr></thead>
@@ -208,23 +277,48 @@
     </div>
 
     <div class="view" id="view-giangvien">
-      <div class="toolbar"><button class="btn btn-primary" id="btnAddTeacher">+ Thêm giảng viên</button></div>
+      <div class="toolbar">
+        <button class="btn btn-primary" id="btnAddTeacher">+ Thêm giảng viên</button>
+        <button class="btn btn-gold" id="btnSaveGiangVien">Lưu thay đổi</button>
+        <span id="gvDirtyNote" style="font-size:12px; color:var(--amber); display:none;">● có thay đổi chưa lưu</span>
+      </div>
       <div class="panel">
         <h2>Danh sách và điều kiện giảng viên</h2>
-        <p class="desc">"Ngày muốn nghỉ" chỉ là ưu tiên mềm - hệ thống cố tránh nhưng vẫn xếp được nếu cần.</p>
+        <p class="desc">
+          <b>Nhóm A</b> — giảng dạy lý thuyết của 1 môn cố định, không đảm nhận thực hành &nbsp;·&nbsp;
+          <b>Nhóm B</b> — chỉ đảm nhận thực hành, không giới hạn môn &nbsp;·&nbsp;
+          <b>Nhóm C</b> — đảm nhận thực hành mọi môn, kết hợp lý thuyết 1 môn cố định.<br>
+          Khung giờ ưu tiên nghỉ là điều kiện tham khảo theo từng ca — hệ thống ưu tiên tránh nhưng vẫn có thể xếp khi cần thiết.
+        </p>
         <table><thead><tr>
-          <th style="width:170px">Họ tên</th><th style="width:150px">Môn bắt buộc</th><th style="width:120px">Loại tiết bắt buộc</th>
-          <th style="width:220px">Ngày muốn nghỉ (ưu tiên)</th><th style="width:40px"></th>
+          <th style="width:150px">Họ tên</th><th style="width:130px">Nhóm</th><th style="width:130px">Môn LT 1</th><th style="width:130px">Môn LT 2 (tùy chọn)</th>
+          <th style="width:170px">Khung giờ ưu tiên nghỉ</th><th style="width:40px"></th>
         </tr></thead><tbody id="gvBody"></tbody></table>
       </div>
     </div>
 
   </main>
-  <footer>Công cụ nội bộ Bộ môn Vật lý - dữ liệu lưu trên Google Sheets qua Apps Script API.</footer>
+  <footer>Hệ thống nội bộ Bộ môn Vật lý</footer>
+</div>
+
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <div class="loading-text" id="loadingText">Đang xử lý...</div>
+</div>
+
+<div class="modal-backdrop" id="caModalBackdrop">
+  <div class="modal-box">
+    <h3 id="caModalTitle">Khung giờ nghỉ</h3>
+    <p class="modal-desc">Chọn 1 lần: <b style="color:var(--amber)">khung giờ ưu tiên nghỉ</b> (điều kiện tham khảo — hệ thống ưu tiên tránh nhưng vẫn có thể xếp khi cần). Chọn lần 2: <b style="color:var(--red)">ca không thể dạy</b> (điều kiện bắt buộc — hệ thống không xếp vào khung giờ này). Chọn lần 3 để bỏ.</p>
+    <div class="ca-grid" id="caGrid"></div>
+    <div class="toolbar" style="justify-content:flex-end; margin:0;">
+      <button class="btn btn-gold btn-sm" id="btnCloseCaModal">Xong</button>
+    </div>
+  </div>
 </div>
 
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbzl3XgI0g7yCQGsNQyvn95-bC6uWkyj2pqlHIZN8cP0OaTUJFa4lykQQReA7Uu7rlfI/exec';
+const API_URL = 'PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE';
 
 const DAY_LABELS = {M:'Hai', T:'Ba', W:'Tư', R:'Năm', F:'Sáu'};
 const DAY_ORDER = ['M','T','W','R','F'];
@@ -235,47 +329,77 @@ const SLOTS = [
   {label:'Ca 4', start:'14:30', end:'16:30'}
 ];
 
-let state = { token:null, role:null, hoTen:null, hocKy:'HK4 2025-2026',
+let state = { token:null, role:null, hoTen:null,
   giangVien:[], monHoc:[], lopHocPhan:[], phanCong:[] };
+
+// ---- Loading overlay (counter-based so nested calls don't hide it early) ----
+let loadingDepth = 0;
+function showLoading(msg){
+  loadingDepth++;
+  document.getElementById('loadingText').textContent = msg || 'Đang xử lý...';
+  document.getElementById('loadingOverlay').style.display = 'flex';
+}
+function hideLoading(){
+  loadingDepth = Math.max(0, loadingDepth-1);
+  if(loadingDepth===0) document.getElementById('loadingOverlay').style.display = 'none';
+}
+async function withLoading(msg, fn){
+  showLoading(msg);
+  try{ return await fn(); }
+  finally{ hideLoading(); }
+}
 
 async function api(action, payload={}){
   const body = new URLSearchParams();
   body.set('action', action);
   body.set('token', state.token || '');
   body.set('payload', JSON.stringify(payload));
-  const res = await fetch(API_URL, { method:'POST', body });
-  return res.json();
+  try{
+    const res = await fetch(API_URL, { method:'POST', body });
+    const data = await res.json();
+    if(!data.ok) console.warn(`API "${action}" trả lỗi:`, data.error);
+    return data;
+  }catch(e){
+    console.error(`API "${action}" thất bại:`, e);
+    return { ok:false, error: String(e) };
+  }
 }
+
+document.getElementById('btnLogin').addEventListener('click', doLogin);
+document.getElementById('loginPass').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
 
 async function doLogin(){
   const username = document.getElementById('loginUser').value.trim();
   const password = document.getElementById('loginPass').value;
   const errEl = document.getElementById('loginErr');
-  errEl.textContent = 'Đang kết nối...';
-  
+  errEl.textContent = '';
   if(API_URL.indexOf('PASTE_YOUR') === 0){
     errEl.textContent = 'Chưa cấu hình API_URL trong file này.';
     return;
   }
-  
-  try {
+  showLoading('Đang đăng nhập...');
+  try{
     const body = new URLSearchParams();
-    body.set('action', 'login');
+    body.set('action','login');
     body.set('payload', JSON.stringify({username,password}));
     const res = await fetch(API_URL, {method:'POST', body});
     const data = await res.json();
-    
     if(!data.ok){ errEl.textContent = data.error || 'Đăng nhập thất bại'; return; }
-    
     state.token = data.token; state.role = data.role; state.hoTen = data.hoTen;
-    localStorage.setItem('phys_session', JSON.stringify({token:data.token, role:data.role, hoTen:data.hoTen}));
+    // sessionStorage (not localStorage): cleared automatically when the browser/tab
+    // is closed, so closing the site always requires logging in again next time.
+    sessionStorage.setItem('phys_session', JSON.stringify({token:data.token, role:data.role, hoTen:data.hoTen}));
     enterApp();
-  } catch(e) { 
-    errEl.textContent = 'Không kết nối được API. Kiểm tra đường dẫn hoặc mạng.'; 
+  }catch(e){
+    console.error('Lỗi đăng nhập:', e);
+    errEl.textContent = 'Không kết nối được API. Mở Console (F12) để xem chi tiết lỗi.';
+  }finally{
+    hideLoading();
   }
 }
+
 document.getElementById('btnLogout').addEventListener('click', ()=>{
-  localStorage.removeItem('phys_session');
+  sessionStorage.removeItem('phys_session');
   location.reload();
 });
 
@@ -298,28 +422,30 @@ async function enterApp(){
     document.querySelectorAll('[data-admin-only]').forEach(t=>t.style.display='none');
   }
 
-  const savedHk = localStorage.getItem('phys_hocky');
-  if(savedHk) state.hocKy = savedHk;
-  document.getElementById('hocKyInput').value = state.hocKy;
-  document.getElementById('hocKyInput').addEventListener('change', e=>{
-    state.hocKy = e.target.value;
-    localStorage.setItem('phys_hocky', state.hocKy);
-    loadAll();
-  });
-
   await loadAll();
 }
 
+function normalizeTime(v){
+  if(typeof v === 'string' && v.includes('T')){
+    const m = v.match(/T(\d{2}):(\d{2})/);
+    if(m) return `${m[1]}:${m[2]}`;
+  }
+  return v;
+}
+
 async function loadAll(){
-  const data = await api('bootstrap', {hocKy: state.hocKy});
-  if(!data.ok){ if(data.error==='AUTH_REQUIRED'){ localStorage.removeItem('phys_session'); location.reload(); } return; }
-  state.giangVien = data.giangVien; state.monHoc = data.monHoc;
-  state.lopHocPhan = data.lopHocPhan; state.phanCong = data.phanCong;
-  renderAll();
+  await withLoading('Đang tải dữ liệu...', async ()=>{
+    const data = await api('bootstrap', {});
+    if(!data.ok){ if(data.error==='AUTH_REQUIRED'){ sessionStorage.removeItem('phys_session'); location.reload(); } return; }
+    state.giangVien = data.giangVien; state.monHoc = data.monHoc;
+    state.lopHocPhan = data.lopHocPhan.map(l => ({...l, GioBatDau: normalizeTime(l.GioBatDau), GioKetThuc: normalizeTime(l.GioKetThuc)}));
+    state.phanCong = data.phanCong;
+    renderAll();
+  });
 }
 
 (function initSession(){
-  const raw = localStorage.getItem('phys_session');
+  const raw = sessionStorage.getItem('phys_session');
   if(raw){
     try{ const s = JSON.parse(raw); state.token=s.token; state.role=s.role; state.hoTen=s.hoTen; enterApp(); }
     catch(e){}
@@ -347,16 +473,57 @@ function sectionsConflict(a,b){ return daysOverlap(a.Thu,b.Thu) && timeOverlap(a
 function teacherSections(gvId, excludeId){
   return state.lopHocPhan.filter(l => assignedTeacherId(l.ID)===gvId && l.ID!==excludeId);
 }
+// Nhóm A: chỉ dạy LT của 1-2 môn cụ thể (MonLT, MonLT2 tùy chọn), không dạy TN
+// Nhóm B: chỉ dạy TN, mọi môn
+// Nhóm C: dạy TN mọi môn + LT bắt buộc của 1-2 môn cụ thể (MonLT, MonLT2 tùy chọn)
+function gvLtCourses(gv){
+  return [gv.MonLT, gv.MonLT2].filter(Boolean);
+}
 function isHardEligible(gv, lop){
-  if(gv.MonBatBuoc && gv.MonBatBuoc !== lop.MaMon) return false;
-  if(gv.LoaiTietBatBuoc && gv.LoaiTietBatBuoc !== lop.Loai) return false;
+  if(lop.Loai === 'LT'){
+    if(gv.Nhom === 'B') return false; // nhóm B không dạy LT
+    if(!gvLtCourses(gv).includes(lop.MaMon)) return false; // nhóm A/C chỉ dạy đúng (các) môn LT được gán
+  } else {
+    if(gv.Nhom === 'A') return false; // nhóm A không dạy TN
+  }
+  if(isHardOffConflict(gv, lop)) return false; // ca nghỉ cứng — không dạy được bất kể loại tiết
   return true;
 }
 function hasHardConflict(gvId, lop){
   return teacherSections(gvId, lop.ID).some(o => sectionsConflict(o, lop));
 }
+function lopSlotIndexes(lop){
+  const res = [];
+  SLOTS.forEach((s,i)=>{ if(timeOverlap(lop.GioBatDau,lop.GioKetThuc,s.start,s.end)) res.push(i+1); });
+  return res;
+}
+function caPrefs(gv){
+  return (gv.CaMuonNghi||'').split(',').filter(Boolean); // e.g. ["M:1","W:3"] — ưu tiên mềm
+}
+function caHardOff(gv){
+  return (gv.CaNghiCung||'').split(',').filter(Boolean); // e.g. ["M:1","W:3"] — bắt buộc nghỉ, không dạy được
+}
+function isHardOffConflict(gv, lop){
+  const offs = caHardOff(gv);
+  if(offs.length===0) return false;
+  const slots = lopSlotIndexes(lop);
+  for(const day of lop.Thu){
+    for(const slot of slots){
+      if(offs.includes(day+':'+slot)) return true;
+    }
+  }
+  return false;
+}
 function hasSoftConflict(gv, lop){
-  return gv.NgayKhongRanh && daysOverlap(gv.NgayKhongRanh, lop.Thu);
+  const prefs = caPrefs(gv);
+  if(prefs.length===0) return false;
+  const slots = lopSlotIndexes(lop);
+  for(const day of lop.Thu){
+    for(const slot of slots){
+      if(prefs.includes(day+':'+slot)) return true;
+    }
+  }
+  return false;
 }
 function teacherWorkingDays(gvId){
   const days = new Set();
@@ -365,32 +532,134 @@ function teacherWorkingDays(gvId){
 }
 
 async function autoAssign(){
-  const order = [...state.lopHocPhan].sort((a,b)=>{
+  // localAssignments/localLoad track the state of THIS run as we go, so load
+  // balancing sees sections assigned earlier in the same pass (fixes the bug
+  // where every section piled onto one person because load was only checked
+  // against the stale, already-committed assignment state).
+  const localAssignments = {};
+  const localLoad = new Map(state.giangVien.map(g=>[g.ID,0]));
+
+  function localConflict(gvId, lop, excludeId){
+    return state.lopHocPhan.some(o => localAssignments[o.ID]===gvId && o.ID!==excludeId && sectionsConflict(o,lop));
+  }
+
+  // Pass 0: keep existing valid assignments as the starting point
+  state.lopHocPhan.forEach(lop=>{
+    const cur = assignedTeacherId(lop.ID);
+    if(!cur) return;
+    const gv = state.giangVien.find(g=>g.ID===cur);
+    if(gv && isHardEligible(gv,lop) && !localConflict(cur,lop,lop.ID)){
+      localAssignments[lop.ID] = cur;
+      localLoad.set(cur, localLoad.get(cur)+1);
+    }
+  });
+
+  // Pass 1: mandatory match — LT sections go straight to their dedicated
+  // Nhóm A/C giảng viên (all sections of that course, unless a real time conflict).
+  state.lopHocPhan.filter(l=>l.Loai==='LT' && !localAssignments[l.ID]).forEach(lop=>{
+    const dedicated = state.giangVien.find(g=> gvLtCourses(g).includes(lop.MaMon) && g.Nhom!=='B' && !localConflict(g.ID,lop,lop.ID));
+    if(dedicated){
+      localAssignments[lop.ID] = dedicated.ID;
+      localLoad.set(dedicated.ID, localLoad.get(dedicated.ID)+1);
+    }
+  });
+
+  // Pass 2: remaining sections (mostly TN) — solved with backtracking, not
+  // pure greedy. A one-shot greedy pass can paint itself into a corner: it
+  // commits to an assignment for an earlier section that happens to be the
+  // ONLY thing blocking every candidate for a later section, and — since it
+  // never revisits that earlier choice — just leaves the later section
+  // empty even though a different (equally valid) earlier choice would have
+  // left someone free. Backtracking explores alternatives when a section
+  // has no candidate left, instead of giving up on the spot.
+  const remaining = state.lopHocPhan.filter(l=>!localAssignments[l.ID]);
+  remaining.sort((a,b)=>{
     const ea = state.giangVien.filter(g=>isHardEligible(g,a)).length;
     const eb = state.giangVien.filter(g=>isHardEligible(g,b)).length;
     return ea-eb;
   });
-  const newAssignments = {};
-  for(const lop of order){
-    const currentId = assignedTeacherId(lop.ID);
-    const currentGv = state.giangVien.find(g=>g.ID===currentId);
-    if(currentGv && isHardEligible(currentGv,lop) && !hasHardConflict(currentId,lop)){
-      newAssignments[lop.ID] = currentId; continue;
+
+  const solved = {}; // section.ID -> teacher.ID, built up during search
+  let bestSolved = {};
+  let bestCount = 0;
+  let bestViolations = Infinity;
+  let steps = 0;
+  const STEP_LIMIT = 150000;
+
+  function candidateConflict(gvId, lop){
+    if(localConflict(gvId, lop, lop.ID)) return true; // vs. fixed/mandatory picks
+    for(const sid in solved){
+      if(sid===lop.ID) continue;
+      if(solved[sid]===gvId){
+        const other = remaining.find(r=>r.ID===sid);
+        if(other && sectionsConflict(other, lop)) return true;
+      }
     }
-    const candidates = state.giangVien.filter(g => isHardEligible(g,lop) && !hasHardConflict(g.ID,lop));
-    if(candidates.length===0) continue;
+    return false;
+  }
+
+  // Two-tier branch-and-bound: (1) MAXIMIZE coverage — never sacrificed for
+  // anything else; (2) among every way to reach that same max coverage,
+  // MINIMIZE how many assigned sections land on a giảng viên's "ca muốn
+  // nghỉ". Coverage always wins outright; the soft preference only breaks
+  // ties between solutions that are already equally good on coverage — so
+  // it can never cause a class to go unfilled, but it stops losing out to
+  // load-balance on every single decision the way a same-load tie-break did.
+  function search(idx, solvedCount, violCount){
+    steps++;
+    if(steps > STEP_LIMIT) return;
+    if(solvedCount > bestCount || (solvedCount === bestCount && violCount < bestViolations)){
+      bestCount = solvedCount; bestViolations = violCount; bestSolved = {...solved};
+    }
+    if(idx === remaining.length) return;
+    const upperBound = solvedCount + (remaining.length - idx);
+    if(upperBound < bestCount) return; // can never catch up on coverage — prune
+    if(upperBound === bestCount && violCount >= bestViolations) return; // can tie coverage at best, but can't improve violations either — prune
+
+    const lop = remaining[idx];
+    const candidates = state.giangVien.filter(g => isHardEligible(g,lop) && !candidateConflict(g.ID,lop));
     candidates.sort((g1,g2)=>{
-      const load1 = teacherSections(g1.ID,null).length, load2 = teacherSections(g2.ID,null).length;
+      // Soft preference now comes FIRST (try to avoid it), load-balance second.
       const soft1 = hasSoftConflict(g1,lop) ? 1:0, soft2 = hasSoftConflict(g2,lop) ? 1:0;
-      const score1 = load1*2 + soft1, score2 = load2*2 + soft2;
-      return score1-score2;
+      if(soft1!==soft2) return soft1-soft2;
+      const load1 = localLoad.get(g1.ID) + remaining.slice(0,idx).filter(r=>solved[r.ID]===g1.ID).length;
+      const load2 = localLoad.get(g2.ID) + remaining.slice(0,idx).filter(r=>solved[r.ID]===g2.ID).length;
+      return load1-load2;
     });
-    newAssignments[lop.ID] = candidates[0].ID;
+
+    for(const cand of candidates){
+      solved[lop.ID] = cand.ID;
+      const v = hasSoftConflict(cand, lop) ? 1 : 0;
+      search(idx+1, solvedCount+1, violCount+v);
+      delete solved[lop.ID];
+      if(steps > STEP_LIMIT) return;
+    }
+    search(idx+1, solvedCount, violCount); // also try leaving this section unassigned
   }
-  for(const lopId of Object.keys(newAssignments)){
-    await api('setPhanCong', {lopId, gvId:newAssignments[lopId], hocKy: state.hocKy});
+  search(0, 0, 0);
+
+  Object.entries(bestSolved).forEach(([lopId, gvId])=>{
+    localAssignments[lopId] = gvId;
+    localLoad.set(gvId, localLoad.get(gvId)+1);
+  });
+  if(bestCount < remaining.length){
+    console.warn(`Tự động gợi ý: chỉ xếp được ${bestCount}/${remaining.length} lớp còn lại (đã thử ${steps} phương án). Có thể do thiếu giảng viên đủ điều kiện cho khung giờ nào đó, hoặc bài toán quá phức tạp trong giới hạn thời gian tính toán.`);
   }
-  await loadAll();
+  if(bestViolations > 0 && bestViolations < Infinity){
+    console.warn(`Tự động gợi ý: có ${bestViolations} lớp phải xếp trùng ca giảng viên muốn nghỉ (không thể tránh được nếu vẫn muốn xếp đủ ${bestCount} lớp).`);
+  }
+
+  // Apply results to local state only — nothing is sent to the backend until
+  // the admin reviews the suggestion and presses "Lưu thay đổi".
+  state.lopHocPhan.forEach(lop=>{
+    const newGv = localAssignments[lop.ID] || null;
+    state.phanCong = state.phanCong.filter(p=>p.LopHocPhanID!==lop.ID);
+    if(newGv) state.phanCong.push({LopHocPhanID:lop.ID, GiangVienID:newGv});
+  });
+  markPcDirty();
+  renderPhanCong();
+  renderGrid();
+  renderSummary();
 }
 
 function renderPhanCong(){
@@ -435,34 +704,67 @@ function renderPhanCong(){
   document.getElementById('countBadge').textContent = `${assignedCount}/${state.lopHocPhan.length}`;
 
   body.querySelectorAll('select[data-lop]').forEach(sel=>{
-    sel.addEventListener('change', async e=>{
-      await api('setPhanCong', {lopId:e.target.dataset.lop, gvId:e.target.value||null, hocKy: state.hocKy});
-      await loadAll();
+    sel.addEventListener('change', e=>{
+      const lopId = e.target.dataset.lop;
+      const gvId = e.target.value;
+      state.phanCong = state.phanCong.filter(p=>p.LopHocPhanID!==lopId);
+      if(gvId) state.phanCong.push({LopHocPhanID:lopId, GiangVienID:gvId});
+      markPcDirty();
+      renderPhanCong();
+      renderGrid();
+      renderSummary();
+    });
+  });
+}
+
+let pcDirty = false;
+function markPcDirty(){ pcDirty = true; document.getElementById('pcDirtyNote').style.display='inline'; }
+
+let gridTeacherFilter = null; // null = "Tất cả"
+
+function renderTeacherFilterChips(){
+  const wrap = document.getElementById('teacherFilterChips');
+  let html = `<div class="filter-chip ${gridTeacherFilter===null?'active':''}" data-filter="">Tất cả</div>`;
+  state.giangVien.forEach(g=>{
+    html += `<div class="filter-chip ${gridTeacherFilter===g.ID?'active':''}" data-filter="${g.ID}">${g.HoTen}</div>`;
+  });
+  wrap.innerHTML = html;
+  wrap.querySelectorAll('.filter-chip').forEach(chip=>{
+    chip.addEventListener('click', ()=>{
+      gridTeacherFilter = chip.dataset.filter || null;
+      renderGrid();
+      renderTeacherFilterChips();
     });
   });
 }
 
 function renderGrid(){
   const wrap = document.getElementById('gridWrap');
+  const validSections = state.lopHocPhan.filter(l => l.Thu && l.GioBatDau && l.GioKetThuc);
   let html = `<div class="grid-tkb">`;
   html += `<div class="cell head"></div>`;
   DAY_ORDER.forEach(d=> html += `<div class="cell head">Thứ ${DAY_LABELS[d]}</div>`);
   SLOTS.forEach(slot=>{
     html += `<div class="cell head ca">${slot.label}<br><span style="font-weight:400;font-size:10px">${slot.start}-${slot.end}</span></div>`;
     DAY_ORDER.forEach(d=>{
-      const items = state.lopHocPhan.filter(l => l.Thu.includes(d) && timeOverlap(l.GioBatDau,l.GioKetThuc,slot.start,slot.end));
+      const items = validSections.filter(l => l.Thu.includes(d) && timeOverlap(l.GioBatDau,l.GioKetThuc,slot.start,slot.end));
       let cellHtml = '';
       items.forEach(lop=>{
         const gvId = assignedTeacherId(lop.ID);
         const gv = state.giangVien.find(g=>g.ID===gvId);
         const chipClass = !gv ? 'unassigned' : (lop.Loai==='TN' ? 'tn' : '');
-        cellHtml += `<div class="class-chip ${chipClass}"><b>${lop.MaMon} ${lop.MaLop}</b><span>${gv?gv.HoTen:'chưa gán'}</span></div>`;
+        const dimmed = gridTeacherFilter && gvId !== gridTeacherFilter ? 'dimmed' : '';
+        cellHtml += `<div class="class-chip ${chipClass} ${dimmed}"><b>${lop.MaMon} ${lop.MaLop}</b><span>${gv?gv.HoTen:'chưa gán'}</span></div>`;
       });
       html += `<div class="cell">${cellHtml}</div>`;
     });
   });
   html += `</div>`;
   wrap.innerHTML = html;
+  const skipped = state.lopHocPhan.length - validSections.length;
+  if(skipped > 0){
+    wrap.innerHTML += `<p class="desc" style="color:var(--amber); margin-top:8px;">⚠ ${skipped} lớp học phần thiếu Thứ/Giờ nên chưa hiện trên bảng — kiểm tra lại ở tab "Lớp học phần".</p>`;
+  }
 }
 
 function renderSummary(){
@@ -473,163 +775,330 @@ function renderSummary(){
     const assigned = teacherSections(g.ID,null);
     const days = teacherWorkingDays(g.ID);
     const freeDays = DAY_ORDER.filter(d=>!days.has(d));
-    const wantsOff = (g.NgayKhongRanh||'').split('').filter(Boolean);
-    const gotWantedOff = wantsOff.every(d=>!days.has(d));
+    const prefs = caPrefs(g);
+    const assignedSlots = new Set(); // "D:C" for every slot this teacher is actually teaching
+    assigned.forEach(lop=>{
+      lopSlotIndexes(lop).forEach(slot=>{ for(const d of lop.Thu) assignedSlots.add(d+':'+slot); });
+    });
+    const violated = prefs.filter(p=>assignedSlots.has(p));
     const card = document.createElement('div'); card.className='summary-card';
     card.innerHTML = `
       <div class="name">${g.HoTen}</div>
       <div class="row"><span>Số lớp phụ trách</span><span>${assigned.length}</span></div>
       <div class="row"><span>Ngày dạy</span><span>${[...days].sort((a,b)=>DAY_ORDER.indexOf(a)-DAY_ORDER.indexOf(b)).map(d=>DAY_LABELS[d]).join(', ')||'-'}</span></div>
       <div class="row ${freeDays.length>0?'ok':'warn'}"><span>${freeDays.length>0?'Ngày trống':'Không có ngày trống'}</span><span>${freeDays.map(d=>DAY_LABELS[d]).join(', ')}</span></div>
-      ${wantsOff.length>0 ? `<div class="row ${gotWantedOff?'ok':'warn'}"><span>Ưu tiên nghỉ</span><span>${gotWantedOff?'Đạt':'Chưa đạt'}</span></div>` : ''}
+      ${prefs.length>0 ? `<div class="row ${violated.length===0?'ok':'warn'}"><span>Ưu tiên nghỉ (${prefs.length} ca)</span><span>${violated.length===0?'Đạt hết':violated.length+' ca bị xếp trùng'}</span></div>` : ''}
     `;
     grid.appendChild(card);
   });
 }
 
+let lopDirty = false;
+function markLopDirty(){ lopDirty = true; document.getElementById('lopDirtyNote').style.display='inline'; }
+
 function renderLopHocPhan(){
   const body = document.getElementById('lopBody');
   body.innerHTML='';
-  state.lopHocPhan.forEach(lop=>{
-    const mh = state.monHoc.find(m=>m.MaMon===lop.MaMon);
+  const courseOptions = state.monHoc.map(m=>`<option value="${m.MaMon}">${m.MaMon}</option>`).join('');
+  state.lopHocPhan.forEach((lop,idx)=>{
     const tr = document.createElement('tr');
+    const opts = courseOptions.replace(`value="${lop.MaMon}"`, `value="${lop.MaMon}" selected`);
     tr.innerHTML = `
-      <td>${lop.MaMon}${mh?' - '+mh.TenMon:''}</td>
-      <td>${lop.MaLop}</td>
-      <td><span class="pill ${lop.Loai==='LT'?'pill-lt':'pill-tn'}">${lop.Loai}</span></td>
-      <td>${lop.Thu}</td>
-      <td>${lop.GioBatDau}-${lop.GioKetThuc}</td>
-      <td>${lop.Phong||'-'}</td>
-      <td><button class="btn-danger-text" data-del="${lop.ID}">Xóa</button></td>`;
+      <td><select data-f="MaMon" data-idx="${idx}"><option value="">-</option>${opts}</select></td>
+      <td><input type="text" value="${lop.MaLop}" data-f="MaLop" data-idx="${idx}" style="width:100%"></td>
+      <td><select data-f="Loai" data-idx="${idx}"><option ${lop.Loai==='LT'?'selected':''}>LT</option><option ${lop.Loai==='TN'?'selected':''}>TN</option></select></td>
+      <td><input type="text" value="${lop.Thu}" data-f="Thu" data-idx="${idx}" style="width:100%"></td>
+      <td><input type="text" value="${lop.GioBatDau}" data-f="GioBatDau" data-idx="${idx}" style="width:100%"></td>
+      <td><input type="text" value="${lop.GioKetThuc}" data-f="GioKetThuc" data-idx="${idx}" style="width:100%"></td>
+      <td><input type="text" value="${lop.Phong||''}" data-f="Phong" data-idx="${idx}" style="width:100%"></td>
+      <td><button class="btn-danger-text" data-del="${idx}">Xóa</button></td>`;
     body.appendChild(tr);
+  });
+  body.querySelectorAll('[data-f]').forEach(el=>{
+    el.addEventListener('input', e=>{
+      state.lopHocPhan[e.target.dataset.idx][e.target.dataset.f] = e.target.value;
+      markLopDirty();
+    });
   });
   body.querySelectorAll('[data-del]').forEach(btn=>{
     btn.addEventListener('click', async e=>{
+      const idx = Number(e.target.dataset.del);
+      const lop = state.lopHocPhan[idx];
       if(!confirm('Xóa lớp học phần này?')) return;
-      await api('deleteLopHocPhan', {id:e.target.dataset.del});
-      await loadAll();
+      if(lop._new){ state.lopHocPhan.splice(idx,1); renderLopHocPhan(); return; }
+      await withLoading('Đang xóa...', async ()=>{
+        await api('deleteLopHocPhan', {id:lop.ID});
+        await loadAll();
+      });
     });
   });
 }
 
-document.getElementById('btnAddLop').addEventListener('click', async ()=>{
-  const maMon = prompt('Mã môn (vd PHYS100):'); if(!maMon) return;
-  const maLop = prompt('Mã lớp (vd 01 hoặc 01-TN1):'); if(!maLop) return;
-  const loai = confirm('Bấm OK nếu là Lý thuyết (LT), Cancel nếu là Thí nghiệm (TN)') ? 'LT':'TN';
-  const thu = prompt('Thứ học (ký tự M T W R F, vd MR):'); if(!thu) return;
-  const gioBd = prompt('Giờ bắt đầu (vd 07:30):'); if(!gioBd) return;
-  const gioKt = prompt('Giờ kết thúc (vd 09:30):'); if(!gioKt) return;
-  const phong = prompt('Phòng (để trống nếu LT):') || '';
-  await api('saveLopHocPhan', {lop:{MaMon:maMon, MaLop:maLop, Loai:loai, Thu:thu, GioBatDau:gioBd, GioKetThuc:gioKt, Phong:phong, HocKy: state.hocKy}});
-  await loadAll();
+document.getElementById('btnDeleteAllLop').addEventListener('click', async ()=>{
+  if(!confirm(`Xóa TOÀN BỘ ${state.lopHocPhan.length} lớp học phần hiện có? Phân công liên quan cũng sẽ bị xóa theo. Không thể hoàn tác.`)) return;
+  await withLoading('Đang xóa toàn bộ lớp học phần...', async ()=>{
+    await api('deleteAllLopHocPhan', {});
+    await loadAll();
+  });
+});
+document.getElementById('btnAddLop').addEventListener('click', ()=>{
+  state.lopHocPhan.push({ID:'new_'+Date.now(), MaMon:'', MaLop:'', Loai:'LT', Thu:'', GioBatDau:'', GioKetThuc:'', Phong:'', _new:true});
+  markLopDirty();
+  renderLopHocPhan();
+});
+document.getElementById('btnSaveLop').addEventListener('click', async ()=>{
+  for(const lop of state.lopHocPhan){
+    if(!lop.MaMon || !lop.MaLop || !lop.Thu || !lop.GioBatDau || !lop.GioKetThuc){
+      alert('Có lớp học phần thiếu thông tin bắt buộc (môn / mã lớp / thứ / giờ).');
+      return;
+    }
+  }
+  const rows = state.lopHocPhan.map(l => ({...l, ID: l.ID.startsWith('new_') ? null : l.ID}));
+  await withLoading('Đang lưu...', async ()=>{
+    await api('bulkSaveLopHocPhanEdits', {rows});
+    lopDirty = false;
+    document.getElementById('lopDirtyNote').style.display='none';
+    await loadAll();
+  });
 });
 
 const dropzone = document.getElementById('dropzone');
-const pdfInput = document.getElementById('pdfInput');
-dropzone.addEventListener('click', ()=>pdfInput.click());
+const docxInput = document.getElementById('docxInput');
+dropzone.addEventListener('click', ()=>docxInput.click());
 dropzone.addEventListener('dragover', e=>{ e.preventDefault(); dropzone.classList.add('drag'); });
 dropzone.addEventListener('dragleave', ()=>dropzone.classList.remove('drag'));
 dropzone.addEventListener('drop', e=>{
   e.preventDefault(); dropzone.classList.remove('drag');
-  if(e.dataTransfer.files.length) handlePdfFile(e.dataTransfer.files[0]);
+  if(e.dataTransfer.files.length) handleDocxFile(e.dataTransfer.files[0]);
 });
-pdfInput.addEventListener('change', e=>{ if(e.target.files.length) handlePdfFile(e.target.files[0]); });
+docxInput.addEventListener('change', e=>{ if(e.target.files.length) handleDocxFile(e.target.files[0]); });
 
-async function handlePdfFile(file){
-  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-  const buf = await file.arrayBuffer();
-  const pdf = await pdfjsLib.getDocument({data:buf}).promise;
-  let lines = [];
-  for(let p=1;p<=pdf.numPages;p++){
-    const page = await pdf.getPage(p);
-    const content = await page.getTextContent();
-    const byY = {};
-    content.items.forEach(it=>{
-      const y = Math.round(it.transform[5]);
-      if(!byY[y]) byY[y]=[];
-      byY[y].push({x:it.transform[4], text:it.str});
-    });
-    const ys = Object.keys(byY).map(Number).sort((a,b)=>b-a);
-    ys.forEach(y=>{
-      const lineItems = byY[y].sort((a,b)=>a.x-b.x);
-      lines.push(lineItems.map(i=>i.text).join(' ').replace(/\s+/g,' ').trim());
-    });
+const W_NS = 'http://schemas.openxmlformats.org/wordprocessingml/2006/main';
+
+function tcText(tc){
+  const ts = tc.getElementsByTagNameNS(W_NS, 't');
+  let s = '';
+  for(let i=0;i<ts.length;i++) s += ts[i].textContent;
+  return s.trim();
+}
+function isVMergeContinue(tc){
+  const tcPr = tc.getElementsByTagNameNS(W_NS,'tcPr')[0];
+  if(!tcPr) return false;
+  const vm = tcPr.getElementsByTagNameNS(W_NS,'vMerge')[0];
+  if(!vm) return false;
+  return !vm.getAttribute('w:val'); // no val = "continue"; val="restart" = start of merge
+}
+
+// Reads the schedule table directly from Word's raw XML, using the real
+// vMerge (merged-cell) markers instead of guessing course boundaries by
+// position — this is what makes Word far more reliable than PDF here.
+// Returns [{MaMon,TenMon,MaLop,Loai,Thu,GioBatDau,GioKetThuc,Phong, trRef}]
+// trRef/instructorTc are only meaningful against the SAME parsed `doc`
+// (used later when filling instructor names back into the template).
+function periodDurationDays(periodText){
+  const m = (periodText||'').match(/(\d{2})\/(\d{2})\/(\d{4})\s*-\s*(\d{2})\/(\d{2})\/(\d{4})/);
+  if(!m) return 0;
+  const d1 = new Date(+m[3], +m[2]-1, +m[1]);
+  const d2 = new Date(+m[6], +m[5]-1, +m[4]);
+  return Math.round((d2-d1) / 86400000);
+}
+
+function parseDocxSchedule(xmlDoc){
+  const raw = new Map(); // key -> array of occurrences
+  const tbls = xmlDoc.getElementsByTagNameNS(W_NS, 'tbl');
+  for(let t=0; t<tbls.length; t++){
+    let currentCourse = null, currentCourseName = null;
+    const trs = tbls[t].getElementsByTagNameNS(W_NS, 'tr');
+    for(let r=0; r<trs.length; r++){
+      const tcs = trs[r].getElementsByTagNameNS(W_NS, 'tc');
+      if(tcs.length < 11) continue;
+      const no = tcText(tcs[0]);
+      if(!/^\d+$/.test(no)) continue;
+
+      if(!isVMergeContinue(tcs[1])){
+        currentCourse = tcText(tcs[1]).replace(/\s+/g,'');
+        currentCourseName = tcText(tcs[2]);
+      }
+      if(!currentCourse || !currentCourse.startsWith('PHYS')) continue;
+
+      const crn = tcText(tcs[3]);
+      const day = tcText(tcs[5]);
+      const time = tcText(tcs[6]);
+      const room = tcText(tcs[7]);
+      const period = tcText(tcs[10]);
+      const instructorTc = tcs[8];
+
+      const crnParts = crn.split(' ').filter(Boolean);
+      if(crnParts.length===0) continue;
+      let maLop, loai;
+      if(crnParts.length>=2){ maLop = crnParts[0]+'-TN'+crnParts[1]; loai='TN'; }
+      else { maLop = crnParts[0]; loai='LT'; }
+
+      const key = currentCourse+'|'+maLop;
+      if(!raw.has(key)) raw.set(key, []);
+      raw.get(key).push({MaMon:currentCourse, TenMon:currentCourseName, MaLop:maLop, Loai:loai,
+        Thu:(day||''), GioBatDau:null, GioKetThuc:null, time, room, period,
+        duration: periodDurationDays(period), instructorTc});
+    }
   }
-  const rows = parsePhysRows(lines);
-  renderImportPreview(rows);
-}
 
-// Token-based parser, validated against the actual EIU schedule PDF.
-// Handles: (a) course-header lines fused onto a data row's line, (b) the
-// leading NO. column sharing the same line as CRN/day/time, (c) resetting
-// the "current course" tracker on any non-PHYS header so unrelated rows
-// from other departments never get attributed to Physics.
-function parseDataTokens(tokens){
-  const timeIdx = tokens.findIndex(t=>/^\d{2}:\d{2}-\d{2}:\d{2}$/.test(t));
-  if(timeIdx<2) return null;
-  const dayTok = tokens[timeIdx-1];
-  if(!/^[MTWRFSU]{1,3}$/.test(dayTok)) return null;
-  const crhTok = tokens[timeIdx-2];
-  if(!/^\d+$/.test(crhTok)) return null;
-  const crnTokens = tokens.slice(0, timeIdx-2);
-  if(crnTokens.length===0 || crnTokens.length>2) return null;
-  const [start,end] = tokens[timeIdx].split('-');
-  const after = tokens.slice(timeIdx+1);
-  let room = '';
-  if(after.length>0 && /[A-Z]/.test(after[0]) && after[0] !== '0'){ room = after[0]; }
-  return { crn: crnTokens, day: dayTok, start, end, room };
-}
-
-function parsePhysRows(lines){
+  // A class can appear as several rows (period-variant repeats of the same
+  // weekly pattern, or — rarely — the two weekly sessions split across two
+  // single-day rows instead of one combined "TR"-style code). We pick the
+  // row with the LONGEST period as the authoritative weekly pattern (a
+  // short one-off row, e.g. a single makeup week shifted to a different
+  // day, should not get merged in and inflate a 2-day pattern to 3). Only
+  // when the longest-period row shows just ONE day do we look at the other
+  // occurrences for a second, different day to complete the weekly pattern.
+  const DAY_ORDER_CANON = 'MTWRFSU';
   const results = [];
-  const seen = new Map();
-  let currentCourse = null, currentCourseName = null;
-
-  lines.forEach(rawLine=>{
-    let tokens = rawLine.trim().split(/\s+/).filter(Boolean);
-    if(tokens.length===0) return;
-
-    // standalone header line, e.g. "PHYS 100 Vật lý đại cương" (no leading NO.)
-    if(/^[A-Z]{2,4}$/.test(tokens[0]) && /^\d{3}$/.test(tokens[1]||'')){
-      currentCourse = tokens[0]+tokens[1];
-      currentCourseName = tokens.slice(2).join(' ');
-      return;
+  raw.forEach(occurrences=>{
+    occurrences.sort((a,b)=> b.duration - a.duration);
+    const primary = occurrences[0];
+    let thu = primary.Thu;
+    if(thu.length <= 1){
+      for(const o of occurrences.slice(1)){
+        const extra = [...o.Thu].find(c=>!thu.includes(c));
+        if(extra){ thu += extra; break; }
+      }
     }
+    // Always normalize to Mon->Sun order — the source table can list a
+    // later weekday before an earlier one (e.g. "FM" instead of "MF").
+    thu = [...thu].sort((a,b)=>DAY_ORDER_CANON.indexOf(a)-DAY_ORDER_CANON.indexOf(b)).join('');
 
-    // data rows always start with NO. (a plain integer)
-    if(!/^\d+$/.test(tokens[0])) return;
-    tokens = tokens.slice(1);
-
-    // header fused onto the same line as a data row, e.g. "140 PHYS 102 Vật Lý II V1 03 4 M ..."
-    if(/^[A-Z]{2,4}$/.test(tokens[0]) && /^\d{3}$/.test(tokens[1]||'')){
-      currentCourse = tokens[0]+tokens[1];
-      let i = 2;
-      const nameWords = [];
-      while(i < tokens.length && !/\d/.test(tokens[i])){ nameWords.push(tokens[i]); i++; }
-      currentCourseName = nameWords.join(' ');
-      tokens = tokens.slice(i);
-    }
-
-    if(!currentCourse || !currentCourse.startsWith('PHYS')) return;
-    const row = parseDataTokens(tokens);
-    if(!row) return;
-
-    let maLop, loai;
-    if(row.crn.length>=2){ maLop = row.crn[0]+'-TN'+row.crn[1]; loai='TN'; }
-    else { maLop = row.crn[0]; loai='LT'; }
-
-    const key = currentCourse+'|'+maLop;
-    if(seen.has(key)) return; // keep first occurrence only (main teaching period)
-    seen.set(key,true);
-    results.push({MaMon:currentCourse, TenMon:currentCourseName, MaLop:maLop, Loai:loai, Thu:row.day, GioBatDau:row.start, GioKetThuc:row.end, Phong:row.room});
+    const [start,end] = (primary.time||'').split('-');
+    // Keep instructor-cell refs from EVERY physical row sharing this CRN
+    // (not just the primary one) so filling the export writes the name
+    // into every repeated occurrence of the class in the template, not
+    // just the single row we picked as the canonical data source.
+    const instructorTcList = occurrences.map(o=>o.instructorTc);
+    results.push({MaMon:primary.MaMon, TenMon:primary.TenMon, MaLop:primary.MaLop, Loai:primary.Loai,
+      Thu:thu, GioBatDau:start, GioKetThuc:end, Phong:primary.room, instructorTc:primary.instructorTc, instructorTcList});
   });
   return results;
 }
 
+let currentTemplateFilename = null;
+
+function bufToBase64(buf){
+  return btoa(new Uint8Array(buf).reduce((s,b)=>s+String.fromCharCode(b),''));
+}
+function base64ToBuf(base64){
+  const binary = atob(base64);
+  const bytes = new Uint8Array(binary.length);
+  for(let i=0;i<binary.length;i++) bytes[i] = binary.charCodeAt(i);
+  return bytes.buffer;
+}
+
+async function handleDocxFile(file){
+  const isPdf = file.name.toLowerCase().endsWith('.pdf') || file.type === 'application/pdf';
+  await withLoading(isPdf ? 'Đang chuyển PDF sang Word qua Google Drive...' : 'Đang đọc file Word...', async ()=>{
+    let buf = await file.arrayBuffer();
+
+    if(isPdf){
+      const res = await api('convertPdfToDocx', {base64: bufToBase64(buf)});
+      if(!res.ok){ alert('Không chuyển đổi được PDF sang Word: ' + (res.error||'')); return; }
+      buf = base64ToBuf(res.base64);
+    }
+
+    const zip = await JSZip.loadAsync(buf);
+    const xmlStr = await zip.file('word/document.xml').async('string');
+    const xmlDoc = new DOMParser().parseFromString(xmlStr, 'application/xml');
+    const rows = parseDocxSchedule(xmlDoc).map(({instructorTc, instructorTcList, ...rest}) => rest); // drop DOM refs before preview/save
+
+    // Store the (converted, if needed) docx as this học kỳ's export template.
+    const base64 = bufToBase64(buf);
+    localStorage.setItem('phys_docx_template_current', base64);
+    currentTemplateFilename = isPdf ? file.name.replace(/\.pdf$/i, '.docx') + ' (chuyển từ PDF)' : file.name;
+    renderExportTemplateStatus();
+
+    renderImportPreview(rows);
+  });
+}
+
+function renderExportTemplateStatus(){
+  const el = document.getElementById('exportTemplateStatus');
+  const stored = localStorage.getItem('phys_docx_template_current');
+  if(stored){
+    el.innerHTML = `Đã sẵn sàng mẫu Word${currentTemplateFilename ? ' — '+currentTemplateFilename : ''}.`;
+    el.style.color = 'var(--teal)';
+  }else{
+    el.innerHTML = `Chưa có mẫu Word — vui lòng nạp file tại mục "Lớp học phần" trước khi xuất.`;
+    el.style.color = 'var(--amber)';
+  }
+}
+
+// Builds the filled docx blob from the stored template + current assignments.
+// Shared by both the Word-download button and the PDF-export button.
+async function buildFilledDocxBlob(){
+  const base64 = localStorage.getItem('phys_docx_template_current');
+  if(!base64) return null;
+
+  const bytes = base64ToBuf(base64);
+  const zip = await JSZip.loadAsync(bytes);
+  const xmlStr = await zip.file('word/document.xml').async('string');
+  const xmlDoc = new DOMParser().parseFromString(xmlStr, 'application/xml');
+  const templateRows = parseDocxSchedule(xmlDoc); // fresh DOM refs tied to this xmlDoc
+
+  let filled = 0, filledCells = 0;
+  const unmatched = [];
+  templateRows.forEach(tRow=>{
+    const lop = state.lopHocPhan.find(l => l.MaMon===tRow.MaMon && l.MaLop===tRow.MaLop);
+    if(!lop) { unmatched.push(`${tRow.MaMon} ${tRow.MaLop}`); return; }
+    const gv = state.giangVien.find(g => g.ID === assignedTeacherId(lop.ID));
+    if(!gv) return; // leave blank if unassigned
+    tRow.instructorTcList.forEach(instructorTc=>{
+      const p = instructorTc.getElementsByTagNameNS(W_NS,'p')[0];
+      const r = xmlDoc.createElementNS(W_NS, 'w:r');
+      const rPr = xmlDoc.createElementNS(W_NS, 'w:rPr');
+      const sz = xmlDoc.createElementNS(W_NS, 'w:sz');
+      sz.setAttribute('w:val', '16');
+      rPr.appendChild(sz);
+      r.appendChild(rPr);
+      const t = xmlDoc.createElementNS(W_NS, 'w:t');
+      t.textContent = gv.HoTen;
+      r.appendChild(t);
+      p.appendChild(r);
+      filledCells++;
+    });
+    filled++;
+  });
+  if(unmatched.length>0) console.warn('Các lớp trong file mẫu không khớp với hệ thống:', unmatched);
+
+  const newXml = new XMLSerializer().serializeToString(xmlDoc);
+  zip.file('word/document.xml', newXml);
+  const blob = await zip.generateAsync({type:'blob', compression:'DEFLATE', compressionOptions:{level:6}});
+  return { blob, filled, filledCells, unmatched };
+}
+function fillSummaryMessage({filled, filledCells, unmatched}){
+  let msg = `Đã điền ${filled} lớp có giảng viên (${filledCells} ô trong file, gồm cả các dòng lặp cùng mã lớp).`;
+  if(unmatched.length>0){
+    msg += `\n\n${unmatched.length} lớp trong file mẫu KHÔNG khớp với hệ thống:\n` + unmatched.join(', ') +
+      `\n\nKiểm tra ở tab "Lớp học phần" xem các mã lớp này có tồn tại đúng như vậy không (có thể do trùng lặp hoặc bị sửa tay khác với file mẫu gốc).`;
+  }
+  return msg;
+}
+
+document.getElementById('btnExportFilledWord').addEventListener('click', async ()=>{
+  if(!localStorage.getItem('phys_docx_template_current')){ alert('Chưa có mẫu Word. Nạp file ở tab "Lớp học phần" trước.'); return; }
+  await withLoading('Đang điền tên vào file Word...', async ()=>{
+    const result = await buildFilledDocxBlob();
+    const url = URL.createObjectURL(result.blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `TKB_VatLy_da_dien_ten.docx`;
+    a.click();
+    URL.revokeObjectURL(url);
+    alert(fillSummaryMessage(result));
+  });
+});
+
+
+
 function renderImportPreview(rows){
   const wrap = document.getElementById('importPreviewWrap');
   if(rows.length===0){ wrap.innerHTML = `<div class="empty-state">Không trích được dòng PHYS nào. Kiểm tra lại file hoặc thêm thủ công.</div>`; return; }
-  let html = `<p class="desc">Trích được ${rows.length} lớp. Kiểm tra/sửa rồi bấm "Lưu vào hệ thống".</p>
+  let html = `<p class="desc">Đã trích xuất ${rows.length} lớp học phần. Kiểm tra và điều chỉnh nếu cần trước khi lưu.</p>
   <table class="import-preview"><thead><tr>
     <th>Môn</th><th>Mã lớp</th><th>Loại</th><th>Thứ</th><th>Bắt đầu</th><th>Kết thúc</th><th>Phòng</th><th></th>
   </tr></thead><tbody>`;
@@ -663,110 +1132,231 @@ function renderImportPreview(rows){
       renderImportPreview(rows);
     });
   });
-  document.getElementById('btnCancelImport').addEventListener('click', ()=>{ wrap.innerHTML=''; pdfInput.value=''; });
+  document.getElementById('btnCancelImport').addEventListener('click', ()=>{ wrap.innerHTML=''; docxInput.value=''; });
   document.getElementById('btnSaveImport').addEventListener('click', async ()=>{
-    const uniqueCourses = {};
-    rows.forEach(r=>{ uniqueCourses[r.MaMon]=r.TenMon; });
-    for(const code of Object.keys(uniqueCourses)){
-      if(!state.monHoc.find(m=>m.MaMon===code)){
-        await api('saveMonHoc', {mh:{MaMon:code, TenMon:uniqueCourses[code], SoTinChi:''}});
+    await withLoading('Đang lưu vào hệ thống...', async ()=>{
+      const uniqueCourses = {};
+      rows.forEach(r=>{ uniqueCourses[r.MaMon]=r.TenMon; });
+      for(const code of Object.keys(uniqueCourses)){
+        if(!state.monHoc.find(m=>m.MaMon===code)){
+          await api('saveMonHoc', {mh:{MaMon:code, TenMon:uniqueCourses[code], SoTinChi:''}});
+        }
       }
-    }
-    await api('bulkImportLopHocPhan', {rows, hocKy: state.hocKy});
-    wrap.innerHTML=''; pdfInput.value='';
-    await loadAll();
+      await api('bulkImportLopHocPhan', {rows});
+      wrap.innerHTML=''; docxInput.value='';
+      await loadAll();
+    });
   });
 }
+
+let mhDirty = false;
+function markMhDirty(){ mhDirty = true; document.getElementById('mhDirtyNote').style.display='inline'; }
 
 function renderMonHoc(){
   const body = document.getElementById('mhBody');
   body.innerHTML='';
-  state.monHoc.forEach(mh=>{
+  state.monHoc.forEach((mh,idx)=>{
     const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td><input type="text" value="${mh.MaMon}" data-f="MaMon" data-orig="${mh.MaMon}" style="width:100%"></td>
-      <td><input type="text" value="${mh.TenMon}" data-f="TenMon" data-orig="${mh.MaMon}" style="width:100%"></td>
-      <td><input type="number" value="${mh.SoTinChi}" data-f="SoTinChi" data-orig="${mh.MaMon}" style="width:100%"></td>
-      <td><button class="btn-danger-text" data-del="${mh.MaMon}">Xóa</button></td>`;
+      <td><input type="text" value="${mh.MaMon}" data-f="MaMon" data-idx="${idx}" style="width:100%"></td>
+      <td><input type="text" value="${mh.TenMon}" data-f="TenMon" data-idx="${idx}" style="width:100%"></td>
+      <td><input type="number" value="${mh.SoTinChi}" data-f="SoTinChi" data-idx="${idx}" style="width:100%"></td>
+      <td><button class="btn-danger-text" data-del="${idx}">Xóa</button></td>`;
     body.appendChild(tr);
   });
   body.querySelectorAll('input[data-f]').forEach(el=>{
-    el.addEventListener('change', async e=>{
-      const orig = e.target.dataset.orig;
-      const row = e.target.closest('tr');
-      const updated = { MaMon: row.querySelector('[data-f=MaMon]').value, TenMon: row.querySelector('[data-f=TenMon]').value, SoTinChi: row.querySelector('[data-f=SoTinChi]').value };
-      await api('saveMonHoc', {mh: updated});
-      await loadAll();
+    el.addEventListener('input', e=>{
+      state.monHoc[e.target.dataset.idx][e.target.dataset.f] = e.target.value;
+      markMhDirty();
     });
   });
   body.querySelectorAll('[data-del]').forEach(btn=>{
     btn.addEventListener('click', async e=>{
+      const idx = Number(e.target.dataset.del);
+      const mh = state.monHoc[idx];
       if(!confirm('Xóa môn học này?')) return;
-      await api('deleteMonHoc', {maMon:e.target.dataset.del});
-      await loadAll();
+      if(mh._new){ state.monHoc.splice(idx,1); renderMonHoc(); return; }
+      await withLoading('Đang xóa...', async ()=>{
+        await api('deleteMonHoc', {maMon:mh.MaMon});
+        await loadAll();
+      });
     });
   });
 }
-document.getElementById('btnAddMonHoc').addEventListener('click', async ()=>{
-  const maMon = prompt('Mã môn:'); if(!maMon) return;
-  const tenMon = prompt('Tên môn:') || '';
-  await api('saveMonHoc', {mh:{MaMon:maMon, TenMon:tenMon, SoTinChi:''}});
-  await loadAll();
+document.getElementById('btnAddMonHoc').addEventListener('click', ()=>{
+  state.monHoc.push({MaMon:'', TenMon:'', SoTinChi:'', _new:true});
+  markMhDirty();
+  renderMonHoc();
 });
+document.getElementById('btnSaveMonHoc').addEventListener('click', async ()=>{
+  for(const mh of state.monHoc){
+    if(!mh.MaMon){ alert('Có môn học chưa nhập Mã môn.'); return; }
+  }
+  await withLoading('Đang lưu...', async ()=>{
+    await api('bulkSaveMonHoc', {rows: state.monHoc});
+    mhDirty = false;
+    document.getElementById('mhDirtyNote').style.display='none';
+    await loadAll();
+  });
+});
+
+let gvDirty = false;
+function markGvDirty(){ gvDirty = true; document.getElementById('gvDirtyNote').style.display='inline'; }
 
 function renderGiangVien(){
   const body = document.getElementById('gvBody');
   body.innerHTML='';
   state.giangVien.forEach(g=>{
     const tr = document.createElement('tr');
-    const courseOptions = ['<option value="">(mọi môn)</option>'].concat(
-      state.monHoc.map(m=>`<option value="${m.MaMon}" ${g.MonBatBuoc===m.MaMon?'selected':''}>${m.MaMon}</option>`)
+    const nhomOptions = [
+      ['A','Nhóm A — chỉ LT'],['B','Nhóm B — chỉ TN'],['C','Nhóm C — TN + LT']
+    ].map(([v,label])=>`<option value="${v}" ${g.Nhom===v?'selected':''}>${label}</option>`).join('');
+    const courseOptionsFor = (selected)=> ['<option value="">(chọn môn)</option>'].concat(
+      state.monHoc.map(m=>`<option value="${m.MaMon}" ${selected===m.MaMon?'selected':''}>${m.MaMon}</option>`)
     ).join('');
-    const typeOptions = ['','LT','TN'].map(v=>`<option value="${v}" ${(g.LoaiTietBatBuoc||'')===v?'selected':''}>${v||'(LT & TN)'}</option>`).join('');
-    const dayChecks = DAY_ORDER.map(d=>{
-      const off = (g.NgayKhongRanh||'').includes(d);
-      return `<div class="day-check ${off?'off':''}" data-day="${d}" data-gv="${g.ID}">${DAY_LABELS[d][0]}</div>`;
-    }).join('');
+    const courseDisabled = g.Nhom==='B' ? 'disabled' : '';
+    const caCount = caPrefs(g).length;
+    const caHardCount = caHardOff(g).length;
+    const caLabel = (caCount>0 || caHardCount>0)
+      ? [caCount>0 ? `${caCount} ưu tiên nghỉ` : '', caHardCount>0 ? `${caHardCount} không thể dạy` : ''].filter(Boolean).join(', ')
+      : 'Thiết lập khung giờ';
     tr.innerHTML = `
       <td><input type="text" value="${g.HoTen}" data-f="HoTen" data-gv="${g.ID}" style="width:100%"></td>
-      <td><select data-f="MonBatBuoc" data-gv="${g.ID}">${courseOptions}</select></td>
-      <td><select data-f="LoaiTietBatBuoc" data-gv="${g.ID}">${typeOptions}</select></td>
-      <td><div class="day-checks">${dayChecks}</div></td>
+      <td><select data-f="Nhom" data-gv="${g.ID}">${nhomOptions}</select></td>
+      <td><select data-f="MonLT" data-gv="${g.ID}" ${courseDisabled}>${courseOptionsFor(g.MonLT)}</select></td>
+      <td><select data-f="MonLT2" data-gv="${g.ID}" ${courseDisabled}>${courseOptionsFor(g.MonLT2)}</select></td>
+      <td><button class="btn btn-outline btn-sm" data-open-ca="${g.ID}">${caLabel}</button></td>
       <td><button class="btn-danger-text" data-del="${g.ID}">Xóa</button></td>`;
     body.appendChild(tr);
   });
 
   body.querySelectorAll('input[data-f], select[data-f]').forEach(el=>{
-    el.addEventListener('change', async e=>{
+    el.addEventListener('input', e=>{
       const gv = state.giangVien.find(g=>g.ID===e.target.dataset.gv);
       gv[e.target.dataset.f] = e.target.value;
-      await api('saveGiangVien', {gv});
-      await loadAll();
+      if(e.target.dataset.f==='Nhom' && e.target.value==='B'){ gv.MonLT=''; gv.MonLT2=''; }
+      markGvDirty();
+      if(e.target.dataset.f==='Nhom') renderGiangVien();
     });
   });
-  body.querySelectorAll('.day-check').forEach(el=>{
-    el.addEventListener('click', async e=>{
-      const gv = state.giangVien.find(g=>g.ID===e.target.dataset.gv);
-      let off = (gv.NgayKhongRanh||'').split('').filter(Boolean);
-      const day = e.target.dataset.day;
-      if(off.includes(day)) off = off.filter(d=>d!==day); else off.push(day);
-      gv.NgayKhongRanh = off.join('');
-      await api('saveGiangVien', {gv});
-      await loadAll();
-    });
+  body.querySelectorAll('[data-open-ca]').forEach(btn=>{
+    btn.addEventListener('click', e=>openCaModal(e.target.dataset.openCa));
   });
   body.querySelectorAll('[data-del]').forEach(btn=>{
     btn.addEventListener('click', async e=>{
+      const id = e.target.dataset.del;
       if(!confirm('Xóa giảng viên này?')) return;
-      await api('deleteGiangVien', {id:e.target.dataset.del});
-      await loadAll();
+      if(id.startsWith('new_')){
+        state.giangVien = state.giangVien.filter(g=>g.ID!==id);
+        renderGiangVien();
+        return;
+      }
+      await withLoading('Đang xóa...', async ()=>{
+        await api('deleteGiangVien', {id});
+        await loadAll();
+      });
     });
   });
 }
-document.getElementById('btnAddTeacher').addEventListener('click', async ()=>{
-  const hoTen = prompt('Họ tên giảng viên:'); if(!hoTen) return;
-  await api('saveGiangVien', {gv:{HoTen:hoTen, MonBatBuoc:'', LoaiTietBatBuoc:'', NgayKhongRanh:''}});
-  await loadAll();
+
+// ---- Ca (session) picker modal — 3 trạng thái mỗi ô: trống / mềm / cứng ----
+function openCaModal(gvId){
+  const gv = state.giangVien.find(g=>g.ID===gvId);
+  document.getElementById('caModalTitle').textContent = `Khung giờ nghỉ — ${gv.HoTen}`;
+  renderCaGrid(gv);
+  document.getElementById('caModalBackdrop').style.display = 'flex';
+}
+function renderCaGrid(gv){
+  const grid = document.getElementById('caGrid');
+  const soft = new Set(caPrefs(gv));
+  const hard = new Set(caHardOff(gv));
+  let html = `<div></div>`;
+  DAY_ORDER.forEach(d=> html += `<div class="gh">Thứ ${DAY_LABELS[d]}<br><span class="day-toggle-all" data-toggle-day="${d}" data-gv="${gv.ID}">bỏ chọn cả ngày</span></div>`);
+  SLOTS.forEach((s,i)=>{
+    const slot = i+1;
+    html += `<div class="rh">${s.label}</div>`;
+    DAY_ORDER.forEach(d=>{
+      const key = d+':'+slot;
+      const cls = hard.has(key) ? 'hard' : (soft.has(key) ? 'active' : '');
+      const label = hard.has(key) ? 'Không dạy' : (soft.has(key) ? 'Ưu tiên' : '');
+      html += `<div class="ca-cell ${cls}" data-key="${key}" data-gv="${gv.ID}">${label}</div>`;
+    });
+  });
+  grid.innerHTML = html;
+
+  grid.querySelectorAll('.ca-cell').forEach(cell=>{
+    cell.addEventListener('click', e=>{
+      const g = state.giangVien.find(x=>x.ID===e.target.dataset.gv);
+      let soft = caPrefs(g);
+      let hard = caHardOff(g);
+      const key = e.target.dataset.key;
+      // cycle: none -> soft -> hard -> none
+      if(hard.includes(key)){
+        hard = hard.filter(k=>k!==key);
+      } else if(soft.includes(key)){
+        soft = soft.filter(k=>k!==key);
+        hard = [...hard, key];
+      } else {
+        soft = [...soft, key];
+      }
+      g.CaMuonNghi = soft.join(',');
+      g.CaNghiCung = hard.join(',');
+      markGvDirty();
+      renderCaGrid(g);
+    });
+  });
+  grid.querySelectorAll('[data-toggle-day]').forEach(el=>{
+    el.addEventListener('click', e=>{
+      const g = state.giangVien.find(x=>x.ID===e.target.dataset.gv);
+      const d = e.target.dataset.toggleDay;
+      const dayKeys = SLOTS.map((_,i)=> d+':'+(i+1));
+      // "Bỏ chọn cả ngày": clear both soft and hard marks for every ca that day
+      g.CaMuonNghi = caPrefs(g).filter(k=>!dayKeys.includes(k)).join(',');
+      g.CaNghiCung = caHardOff(g).filter(k=>!dayKeys.includes(k)).join(',');
+      markGvDirty();
+      renderCaGrid(g);
+    });
+  });
+}
+document.getElementById('btnCloseCaModal').addEventListener('click', ()=>{
+  document.getElementById('caModalBackdrop').style.display = 'none';
+  renderGiangVien(); // refresh the "Đã chọn N ca" button label
+});
+document.getElementById('caModalBackdrop').addEventListener('click', e=>{
+  if(e.target.id==='caModalBackdrop'){
+    document.getElementById('caModalBackdrop').style.display = 'none';
+    renderGiangVien();
+  }
+});
+
+document.getElementById('btnAddTeacher').addEventListener('click', ()=>{
+  state.giangVien.push({ID:'new_'+Date.now(), HoTen:'Giảng viên mới', Nhom:'B', MonLT:'', MonLT2:'', CaMuonNghi:'', CaNghiCung:''});
+  markGvDirty();
+  renderGiangVien();
+});
+document.getElementById('btnSaveGiangVien').addEventListener('click', async ()=>{
+  // enforce: mỗi môn LT chỉ gắn với đúng 1 người (xét cả Môn LT 1 và Môn LT 2)
+  const claimed = {};
+  for(const g of state.giangVien){
+    if(g.Nhom==='A' || g.Nhom==='C'){
+      if(g.MonLT2 && g.MonLT2===g.MonLT){ alert(`Giảng viên "${g.HoTen}": Môn LT 1 và Môn LT 2 không được trùng nhau.`); return; }
+      if(!g.MonLT && !g.MonLT2){ alert(`Giảng viên "${g.HoTen}" thuộc Nhóm ${g.Nhom} nhưng chưa chọn môn LT nào.`); return; }
+      for(const course of gvLtCourses(g)){
+        if(claimed[course] && claimed[course]!==g.HoTen){
+          alert(`Môn LT "${course}" đang được gán cho cả "${claimed[course]}" và "${g.HoTen}". Mỗi môn LT chỉ được gắn với đúng 1 người.`);
+          return;
+        }
+        claimed[course] = g.HoTen;
+      }
+    }
+  }
+  const rows = state.giangVien.map(g => ({...g, ID: g.ID.startsWith('new_') ? null : g.ID}));
+  await withLoading('Đang lưu...', async ()=>{
+    await api('bulkSaveGiangVien', {rows});
+    gvDirty = false;
+    document.getElementById('gvDirtyNote').style.display='none';
+    await loadAll();
+  });
 });
 
 document.getElementById('btnExportSummary').addEventListener('click', ()=>{
@@ -778,33 +1368,45 @@ document.getElementById('btnExportSummary').addEventListener('click', ()=>{
   });
   const ws = XLSX.utils.aoa_to_sheet(rows);
   const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, 'TKB Vat ly');
-  XLSX.writeFile(wb, `TKB_VatLy_${state.hocKy}.xlsx`);
+  XLSX.writeFile(wb, `TKB_VatLy.xlsx`);
 });
-document.getElementById('btnExportOffice').addEventListener('click', ()=>{
-  const rows = [['NO.','COURSE CODE','COURSE NAME','CRN','DAY','TIME','ROOM','INSTRUCTOR']];
-  let no=1;
-  state.lopHocPhan.forEach(lop=>{
-    const mh = state.monHoc.find(m=>m.MaMon===lop.MaMon);
-    const gv = state.giangVien.find(g=>g.ID===assignedTeacherId(lop.ID));
-    rows.push([no++, lop.MaMon, mh?mh.TenMon:'', lop.MaLop, lop.Thu, `${lop.GioBatDau}-${lop.GioKetThuc}`, lop.Phong, gv?gv.HoTen:'']);
-  });
-  const ws = XLSX.utils.aoa_to_sheet(rows);
-  const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, 'For Academic Affairs');
-  XLSX.writeFile(wb, `TKB_VatLy_gui_PhongDaoTao_${state.hocKy}.xlsx`);
-});
-
 document.getElementById('btnAutoAssign').addEventListener('click', autoAssign);
-document.getElementById('btnClearAssign').addEventListener('click', async ()=>{
-  if(!confirm('Xóa toàn bộ phân công hiện tại?')) return;
-  for(const lop of state.lopHocPhan){
-    if(assignedTeacherId(lop.ID)) await api('setPhanCong', {lopId:lop.ID, gvId:null, hocKy: state.hocKy});
-  }
-  await loadAll();
+document.getElementById('btnClearAssign').addEventListener('click', ()=>{
+  if(!confirm('Xóa toàn bộ phân công hiện tại (chưa lưu vẫn có thể Lưu thay đổi để áp dụng)?')) return;
+  state.phanCong = [];
+  markPcDirty();
+  renderPhanCong();
+  renderGrid();
+  renderSummary();
+});
+document.getElementById('btnSavePhanCong').addEventListener('click', async ()=>{
+  // Build the row list from EVERY lớp học phần (not just whatever remains in
+  // state.phanCong) so a removed/cleared assignment is sent as an explicit
+  // "gvId: null" and actually gets deleted on the backend — previously,
+  // clearing an assignment locally just made it silently absent from the
+  // save payload, so the backend never learned it should be removed.
+  const rows = state.lopHocPhan.map(lop => ({LopHocPhanID: lop.ID, GiangVienID: assignedTeacherId(lop.ID) || null}));
+  await withLoading('Đang lưu...', async ()=>{
+    await api('bulkSetPhanCong', {rows});
+    pcDirty = false;
+    document.getElementById('pcDirtyNote').style.display='none';
+    await loadAll();
+  });
 });
 
 function renderAll(){
-  renderGrid(); renderSummary(); renderPhanCong();
-  renderLopHocPhan(); renderMonHoc(); renderGiangVien();
+  const sections = [
+    ['Bảng tổng quan', ()=>{ renderTeacherFilterChips(); renderGrid(); }],
+    ['Tổng quan giảng viên', renderSummary],
+    ['Phân công theo môn', renderPhanCong],
+    ['Lớp học phần', ()=>{ renderLopHocPhan(); renderExportTemplateStatus(); }],
+    ['Môn học', renderMonHoc],
+    ['Giảng viên', renderGiangVien],
+  ];
+  sections.forEach(([label, fn])=>{
+    try{ fn(); }
+    catch(e){ console.error(`Lỗi khi vẽ "${label}":`, e); }
+  });
 }
 </script>
 </body>
